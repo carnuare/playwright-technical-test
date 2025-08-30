@@ -1,16 +1,16 @@
-import tseslint from "typescript-eslint"; // Array of configs
-import playwright from "eslint-plugin-playwright"; // Array of configs for Playwright
+import tseslint from "typescript-eslint";
+import playwright from "eslint-plugin-playwright";
 
 export default [
   {
     ignores: ["node_modules"],
   },
+  ...tseslint.configs.recommended,
+  playwright.configs["flat/recommended"],
   {
     files: ["**/*.{ts,mts,cts}"],
     languageOptions: {
-      parser: tseslint.parser
+      parser: tseslint.parser,
     },
-    ...playwright.configs["flat/recommended"],
-    ...tseslint.configs.recommended,
   },
 ];
