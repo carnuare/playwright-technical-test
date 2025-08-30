@@ -20,7 +20,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          run_install: false
+          run_install: true
 
       - name: Run lint
         run: pnpm lint
@@ -70,12 +70,14 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
-      - name: Run Playwright Tests (${{ matrix.mode }})
+      - name: Run Playwright Tests API Mode
+        if: matrix.mode == 'api'
         run: |
-          pnpm exec playwright test tests/${{ matrix.mode }} --output=playwright-report-${{ matrix.mode }}
-        env:
-          CI_RUN: true
-
+          CI=true PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report-${{ matrix.mode }} pnpm exec playwright test --project=${{ matrix.mode }}
+      - name: Run Playwright Tests UI Mode
+        if: matrix.mode == 'ui'
+        run: |
+          CI=true PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report-${{ matrix.mode }} pnpm exec playwright test --project=ui-chromium --project=ui-firefox
       - name: Upload Test Report (${{ matrix.mode }})
         if: always()
         uses: actions/upload-artifact@v4
