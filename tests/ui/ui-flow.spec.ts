@@ -2,25 +2,125 @@ import { test, expect } from "@playwright/test";
 import { RegistrationPage } from "../../pages/demoqa-register-page.ts";
 
 test.describe("User registration and login flow in QA demo. CI Mode", () => {
-  test("should register a new user (CI)", async ({ page }) => {
-    // Verify the dialog message
-    page.on("dialog", async (dialog) => {
-      expect.soft(dialog.message()).toBe("User Register Successfully.");
-      await dialog.accept();
+  const isCI: boolean = !!process.env.CI;
+  const randomSuffix: string = Math.random().toString(36).slice(2,8);
+  
+  interface UserInfo {
+    readonly firstName: string;
+    readonly lastName: string;
+    readonly username: string;
+    readonly password: string;
+  }
+  const user_info: UserInfo = {
+    firstName: "John",
+    lastName: "Doe",
+    username: `johndoe-${randomSuffix}`,
+    password: "@Password1225",
+  };
+  
+  if(isCI) {
+    test("Should register a new user (CI)", async ({ page }) => {
+      const registrationPage = new RegistrationPage(page);
+      let hasDialogBeenHandled: boolean = false;
+      
+      // Verify the dialog message
+      page.on("dialog", async (dialog) => {
+        expect.soft(dialog.message()).toBe("User Register Successfully.");
+        hasDialogBeenHandled = true;
+        await dialog.accept();
+      });
+      // Registration Step
+      await test.step("Go to Registration Page", async () => {
+        await registrationPage.goto();
+        await expect(page).toHaveURL(registrationPage.url);
       });
 
-    // ---- Registration Step ----
-    const registrationPage = new RegistrationPage(page);
-    await registrationPage.goto();
-    
-    // Bypass the captcha and API call for speed and reliability
-    await registrationPage.bypassRecaptcha();
-    
-    // Fill the registration form
-    await registrationPage.fillRegistrationForm("John", "Doe", "johndoe2512", "@Password1225");
-    
-    // Submit the form and expect the success alert
-    await registrationPage.submitMockRegistration();
+      // Fill the registration form
+      await test.step("Fill registration form", async () => {
+        await registrationPage.fillRegistrationForm(user_info.firstName, user_info.lastName, user_info.username, user_info.password);
+      });
+      
+      await test.step("Mock Recaptcha and submit form", async () => {
+        // Bypass the captcha and API call
+        await registrationPage.mockCaptchaResponse(); 
+      
+        // Submit the form and expect the success alert
+        await registrationPage.submitMockRegistration();
+      });
 
-  });
+      await test.step("Login via API with the newly registered user", async () => {
+        // Since we mocked the Registration submission, we will register the user via API to be able to login later
+        const response = await page.request.post('https://demoqa.com/Account/v1/User', {
+          data: {
+            userName: user_info.username,
+            password: user_info.password
+          }
+        });
+        expect(response.status()).toBe(201); // Created
+      });
+
+      // Ensure the dialog was handled
+      await test.step("Ensure dialog was handled", async () => {
+        expect(hasDialogBeenHandled).toBe(true);
+      });
+
+      // Click "Back to Login" link and verify navigation
+      await test.step("Navigate to Login Page", async () => {
+        await registrationPage.page.getByRole('link', { name: 'Back to Login' }).click();
+        await expect(page).toHaveURL(/.*login/);
+      });
+      
+    });
+  }else{
+    test("Should register a new user (manual)", async ({ page }) => {
+      const registrationPage = new RegistrationPage(page);
+      let hasDialogBeenHandled: boolean = false;
+
+      // Verify the dialog message
+      page.on("dialog", async (dialog) => {
+        expect(dialog.message()).toBe("User Register Successfully.");
+        hasDialogBeenHandled = true;
+        await dialog.accept();
+      });
+
+      // Registration Step
+      await test.step("Go to Registration Page", async () => {
+        await registrationPage.goto();
+      });
+
+      // Fill the registration form
+      await test.step("Fill registration form", async () => {
+        await registrationPage.fillRegistrationForm(user_info.firstName, user_info.lastName, user_info.username, user_info.password);
+      });
+      
+      // Click the recaptcha checkbox
+      await test.step("Solve recaptcha", async () => {
+        await registrationPage.clickOnRecaptcha();
+        // Solve the recaptcha manually
+        console.log("Please solve the recaptcha manually and then press Enter to continue...");
+        // await page.pause();
+        await page.pause(); // Pause to allow manual interaction if needed
+        await expect(registrationPage.recaptchaCheckbox).toBeChecked();
+      });
+
+      await test.step("Submit registration form", async () => {
+        // Submit the form and expect the success alert
+        await registrationPage.submitRegistration();
+      });
+
+      // Ensure the dialog was handled
+      await test.step("Ensure dialog was handled", async () => {
+        await page.waitForEvent('dialog', { timeout: 5000 }) // Wait a bit to ensure dialog is handled 
+        expect(hasDialogBeenHandled).toBe(true);
+      });
+
+      // Click "Back to Login" link and verify navigation
+      await test.step("Navigate to Login Page", async () => {
+        await registrationPage.page.getByRole('link', { name: 'Back to Login' }).click();
+        await expect(page).toHaveURL(/.*login/);
+      });
+
+    });
+  }
+
 });

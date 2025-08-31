@@ -50,28 +50,28 @@ jobs:
         with:
           run_install: true
 
-      - name: Export Playwright version
-        id: playwright-version
-        run: echo "PLAYWRIGHT_VERSION=$(pnpm list @playwright/test --json | jq -r '.[0].devDependencies[\"@playwright/test\"].version')" >> $GITHUB_ENV
+      # - name: Export Playwright version
+      #   id: playwright-version
+      #   run: echo "PLAYWRIGHT_VERSION=$(pnpm list @playwright/test --json | jq -r '.[0].devDependencies[\"@playwright/test\"].version')" >> $GITHUB_ENV
 
-      - name: Restore cache - playwright binaries
-        uses: actions/cache/restore@v4
-        id: playwright-cache
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-          restore-keys: |
-            ${{ runner.os }}-playwright-
+      # - name: Restore cache - playwright binaries
+      #   uses: actions/cache/restore@v4
+      #   id: playwright-cache
+      #   with:
+      #     path: ~/.cache/ms-playwright
+      #     key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-playwright-
 
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
-      - name: Save cache - playwright binaries
-        if: always() && steps.playwright-cache.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+      # - name: Save cache - playwright binaries
+      #   if: always() && steps.playwright-cache.outputs.cache-hit != 'true'
+      #   uses: actions/cache/save@v4
+      #   with:
+      #     path: ~/.cache/ms-playwright
+      #     key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
 
       - name: Run Playwright Tests API Mode
         if: matrix.mode == 'api'
