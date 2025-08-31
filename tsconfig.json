@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+
+    // "rootDir": "./tests",
+    // "outDir": "./dist",
+
+    // Environment Settings
+    "module": "NodeNext",          
+    "target": "ESNext",            
+    "moduleResolution": "NodeNext",
+    "types": ["node", "playwright"], // add playwright types
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": false,           // don't need .d.ts for tests
+    "declarationMap": false,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    
+    "allowImportingTsExtensions": true, // Allows importing TypeScript files with their extensions.
+    "noEmit": true, // Required when using allowImportingTsExtensions, and we don't need to emit files for tests.
+    
+    // Recommended Options
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true, 
+    "moduleDetection": "force" // Ensures that all files are treated as modules, preventing accidental inclusion of global scripts.
+  },
+  "include": [
+    "tests"         
+  ]
+}

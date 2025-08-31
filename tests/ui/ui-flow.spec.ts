@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { RegistrationPage } from "../../pages/demoqa-register-page";
+import { RegistrationPage } from "../../pages/demoqa-register-page.ts";
 
 test.describe("User registration and login flow in QA demo. CI Mode", () => {
   test("should register a new user (CI)", async ({ page }) => {

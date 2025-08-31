@@ -1,26 +1,55 @@
-#   Playwright Technical Test
-  
+# Playwright Technical Test
 
-Run the end-to-end tests:
+This is a test suite built with Playwright and TS, designed to validate key functionalities of the DemoQA website. The test suite is structured to showcase various automation capabilities, including end-to-end UI flows, concurrent multi-user interactions, and direct API consumption.
 
-    pnpm exec playwright test
+### Prerequisites
 
-Start the interactive UI mode:
+To run this project, you need the following installed:
 
-    pnpm exec playwright test --ui
+* **Node.js:** Runtime environment. Version 24 or later. You can find installation instructions on the official Node.js website [here](https://nodejs.org/en/download/).
+* **pnpm:** Package manager. Version 10 or later. Instructions for installing pnpm can be found [here](https://pnpm.io/installation).
 
-Run the tests only on Desktop Chrome:
+### Installation
 
-    pnpm exec playwright test --project=chromium
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/your-username/playwright-technical-test.git
+    cd playwright-technical-test
+    ```
 
-Run the tests in a specific file:
+2.  Install the project dependencies and Playwright's browsers:
+    ```bash
+    pnpm install
+    pnpm playwright install --with-deps
+    ```
 
-    pnpm exec playwright test example
+### Running the Tests
 
-Run the tests in debug mode:
+The project includes several pre-configured scripts to make test execution easy.
 
-    pnpm exec playwright test --debug
+* **Run All Tests:** Launches all tests from both the `tests/api` and `tests/ui` directories and generates a report.
+    ```bash
+    pnpm test
+    ```
 
-Auto generate tests with Codegen:
+* **Run API Tests Only:** Executes only the API tests without launching a browser.
+    ```bash
+    pnpm test-api
+    ```
 
-    pnpm exec playwright codegen
+* **Run UI Tests Only:** Executes only the UI tests against both Chromium and Firefox browsers.
+    ```bash
+    pnpm test-ui
+    ```
+
+### Other Commands
+
+* **Linting:** Runs ESLint to check for code style and potential errors.
+    ```bash
+    pnpm lint
+    ```
+
+* **Type Checking:** Verifies the TypeScript code for type errors.
+    ```bash
+    pnpm typecheck
+    ```

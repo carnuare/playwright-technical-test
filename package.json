@@ -4,12 +4,14 @@
   "description": "Technical test that runs UI and API automated tests using Playwright",
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "typecheck": "tsc --noEmit",
-    "test": "playwright test",
-    "ci": "pnpm run typecheck && pnpm run lint && pnpm run test"
+    "typecheck": "tsc",
+    "test": "playwright test && playwright show-report",
+    "test-api": "playwright test --project=api && playwright show-report",
+    "test-ui": "playwright test --project=ui-chromium --project=ui-firefox && playwright show-report"
   },
   "author": "Carlos Núñez",
   "license": "ISC",
+  "type": "module",
   "packageManager": "pnpm@10.4.1",
   "devDependencies": {
     "@eslint/create-config": "1.10.0",
