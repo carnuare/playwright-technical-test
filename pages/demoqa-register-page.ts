@@ -1,8 +1,10 @@
 import { type Locator, type FrameLocator, type Page } from '@playwright/test';
 
+export const DEMOQA_REGISTER_URL = 'https://demoqa.com/register';
+
 export class RegistrationPage {
     page: Page;
-    url: string = 'https://demoqa.com/register';
+    url: string;
     firstNameInput: Locator;
     lastNameInput: Locator;
     usernameInput: Locator;
@@ -13,6 +15,7 @@ export class RegistrationPage {
     backToLogin: Locator;
     constructor(page: Page) {
         this.page = page;
+        this.url = DEMOQA_REGISTER_URL;
         this.firstNameInput = page.getByRole('textbox', { name: 'First Name' });
         this.lastNameInput = page.getByRole('textbox', { name: 'Last Name' });
         this.usernameInput = page.getByRole('textbox', { name: 'UserName' });

@@ -22,9 +22,12 @@ interface AuthResponse {
 test.describe('DemoQA Books API Tests', () => {
     let authToken: string;
 
+    const generateTokenUrl = 'https://demoqa.com/Account/v1/GenerateToken';
+    const booksUrl = 'https://demoqa.com/BookStore/v1/Books';
+
     test.beforeAll(async ({ request }) => {
         // Generate authentication token
-        const authResponse = await request.post('https://demoqa.com/Account/v1/GenerateToken', {
+        const authResponse = await request.post(generateTokenUrl, {
             data: {
                 userName: 'testuser',
                 password: 'Test123!'
@@ -39,7 +42,7 @@ test.describe('DemoQA Books API Tests', () => {
 
     test('should get all books and validate response structure', async ({ request }) => {
         // Get all books
-        const response = await request.get('https://demoqa.com/BookStore/v1/Books', {
+        const response = await request.get(booksUrl, {
             headers: {
                 'Authorization': `Bearer ${authToken}`
             }

@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { RegistrationPage } from "../../pages/demoqa-register-page.ts";
+import { LoginPage, DEMOQA_LOGIN_URL } from "../../pages/demoqa-login-page.ts";
+import { ProfilePage } from "../../pages/demoqa-profile-page.ts";
 
 test.describe("User registration and login flow in QA demo. CI Mode", () => {
   const isCI: boolean = !!process.env.CI;
@@ -66,8 +68,8 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
 
       // Click "Back to Login" link and verify navigation
       await test.step("Navigate to Login Page", async () => {
-        await registrationPage.page.getByRole('link', { name: 'Back to Login' }).click();
-        await expect(page).toHaveURL(/.*login/);
+        await registrationPage.clickOnBackToLogin();
+        await expect(page).toHaveURL(DEMOQA_LOGIN_URL);
       });
       
     });
@@ -116,11 +118,46 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
 
       // Click "Back to Login" link and verify navigation
       await test.step("Navigate to Login Page", async () => {
-        await registrationPage.page.getByRole('link', { name: 'Back to Login' }).click();
-        await expect(page).toHaveURL(/.*login/);
+        await registrationPage.clickOnBackToLogin();
+        await expect(page).toHaveURL(DEMOQA_LOGIN_URL);
       });
 
     });
   }
+
+  test("Should login with the newly registered user", async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const profilePage = new ProfilePage(page);
+    
+    // Login Step
+    await test.step("Go to Login Page", async () => {
+      await loginPage.goto();
+      await expect(page).toHaveURL(loginPage.url);
+    });
+
+    // Fill the login form and submit
+    await test.step("Fill login form and submit", async () => {
+      await loginPage.fillLoginFormAndSubmit(user_info.username, user_info.password);
+    });
+
+    // Verify successful login by checking URL or presence of logout button
+    await test.step("Verify successful login", async () => {
+      await expect(page).toHaveURL(profilePage.url);
+      // Wait for profile page to load
+      await profilePage.page.waitForLoadState('load');
+    });
+
+    // Verify key elements on the profile page
+    await test.step("Verify profile page elements", async () => {
+      await expect.soft(profilePage.userNameDisplay).toHaveText(user_info.username);
+      await expect.soft(profilePage.logOutButton).toBeVisible();
+      await expect.soft(profilePage.goToBookstoreButton).toBeVisible();
+      await expect.soft(profilePage.deleteAccountButton).toBeVisible();
+      await expect.soft(profilePage.deleteAllBooksButton).toBeVisible();
+      await expect.soft(profilePage.typeToSearchInput).toBeVisible();
+      await expect.soft(profilePage.tableRows).toBeVisible();
+    });
+
+  });
 
 });
