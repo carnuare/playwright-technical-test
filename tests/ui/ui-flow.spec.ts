@@ -13,7 +13,7 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
     readonly username: string;
     readonly password: string;
   }
-  const user_info: UserInfo = {
+  const userInfo: UserInfo = {
     firstName: "John",
     lastName: "Doe",
     username: `johndoe-${randomSuffix}`,
@@ -39,7 +39,7 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
 
       // Fill the registration form
       await test.step("Fill registration form", async () => {
-        await registrationPage.fillRegistrationForm(user_info.firstName, user_info.lastName, user_info.username, user_info.password);
+        await registrationPage.fillRegistrationForm(userInfo.firstName, userInfo.lastName, userInfo.username, userInfo.password);
       });
       
       await test.step("Mock Recaptcha and submit form", async () => {
@@ -54,8 +54,8 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
         // Since we mocked the Registration submission, we will register the user via API to be able to login later
         const response = await page.request.post('https://demoqa.com/Account/v1/User', {
           data: {
-            userName: user_info.username,
-            password: user_info.password
+            userName: userInfo.username,
+            password: userInfo.password
           }
         });
         expect(response.status()).toBe(201); // Created
@@ -92,7 +92,7 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
 
       // Fill the registration form
       await test.step("Fill registration form", async () => {
-        await registrationPage.fillRegistrationForm(user_info.firstName, user_info.lastName, user_info.username, user_info.password);
+        await registrationPage.fillRegistrationForm(userInfo.firstName, userInfo.lastName, userInfo.username, userInfo.password);
       });
       
       // Click the recaptcha checkbox
@@ -137,7 +137,7 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
 
     // Fill the login form and submit
     await test.step("Fill login form and submit", async () => {
-      await loginPage.fillLoginFormAndSubmit(user_info.username, user_info.password);
+      await loginPage.fillLoginFormAndSubmit(userInfo.username, userInfo.password);
     });
 
     // Verify successful login by checking URL or presence of logout button
@@ -149,7 +149,7 @@ test.describe("User registration and login flow in QA demo. CI Mode", () => {
 
     // Verify key elements on the profile page
     await test.step("Verify profile page elements", async () => {
-      await expect.soft(profilePage.userNameDisplay).toHaveText(user_info.username);
+      await expect.soft(profilePage.userNameDisplay).toHaveText(userInfo.username);
       await expect.soft(profilePage.logOutButton).toBeVisible();
       await expect.soft(profilePage.goToBookstoreButton).toBeVisible();
       await expect.soft(profilePage.deleteAccountButton).toBeVisible();
