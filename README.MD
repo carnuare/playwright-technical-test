@@ -27,7 +27,7 @@ To run this project, you need the following installed:
 
 The project includes several pre-configured scripts to make test execution easy.
 
-* **Run All Tests:** Launches all tests from both the `tests/api` and `tests/ui` directories and generates a report.
+* **Run All Tests:** Launches all tests from both the `tests/api` and `tests/ui` directories.
     ```bash
     pnpm test
     ```
@@ -40,6 +40,10 @@ The project includes several pre-configured scripts to make test execution easy.
 * **Run UI Tests Only:** Executes only the UI tests against both Chromium and Firefox browsers.
     ```bash
     pnpm test-ui
+    ```
+* **View Test Report:** Opens the latest HTML report generated after test execution.
+    ```bash
+    pnpm test-report
     ```
 
 ### Other Commands
