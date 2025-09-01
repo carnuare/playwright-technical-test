@@ -82,6 +82,9 @@ jobs:
         with:
           name: playwright-browsers
           path: ~/.cache/ms-playwright
+      
+      - name: Restore Playwright Binaries Permissions
+        run: pnpm exec playwright install --with-deps --only-browsers
 
       - name: Run Playwright Tests API Mode
         if: matrix.mode == 'api'
