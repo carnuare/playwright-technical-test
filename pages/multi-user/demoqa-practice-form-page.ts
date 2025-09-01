@@ -38,7 +38,7 @@ export class PracticeFormPage {
   }
 
   async goto() {
-    await this.page.goto(this.url, { waitUntil: "load" }); // Neccessary to avoid flakiness
+    await this.page.goto(this.url, { waitUntil: "domcontentloaded" });
   }
 
   async fillForm(
@@ -53,7 +53,7 @@ export class PracticeFormPage {
     picturePath: string,
     currentAddress: string,
     state: string,
-    city: string // Basic visible checks + fill
+    city: string 
   ) {
     await expect(this.nameInput).toBeVisible();
     await this.nameInput.fill(name);
@@ -79,9 +79,6 @@ export class PracticeFormPage {
     // press escape to hide the date picker
     await this.subjectsInput.press("Escape");
     await this.page.locator(".container > div > div:nth-child(3)").click();
-    await this.page
-      .locator(".react-datepicker__month-container")
-      .waitFor({ state: "hidden" });
 
     // Subjects: prefer clicking the autocomplete suggestion instead of global Enter
     for (const subject of subjects) {
