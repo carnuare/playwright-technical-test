@@ -1,6 +1,6 @@
 import { type Locator, type Page } from "@playwright/test";
 
-export const DEMOQA_PROFILE_URL = "https://demoqa.com/profile";
+export const DEMOQA_PROFILE_URL = "https://demoqa.com/login";
 
 export class ProfilePage {
   page: Page;

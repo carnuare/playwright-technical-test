@@ -25,7 +25,7 @@ To run this project, you need the following installed:
 
 ### Running the Tests
 
-The project includes several pre-configured scripts to make test execution easy.
+The project includes several pre-configured scripts to make test execution easy. 
 
 * **Run All Tests:** Launches all tests from both the `tests/api` and `tests/ui` directories.
     ```bash
@@ -38,13 +38,25 @@ The project includes several pre-configured scripts to make test execution easy.
     ```
 
 * **Run UI Tests Only:** Executes only the UI tests against both Chromium and Firefox browsers.
+
     ```bash
+    echo 'All UI tests'
     pnpm test-ui
+    echo 'Register and Login flow test'
+    pnpm test-ui-flow
+    echo 'Concurrent users test'
+    pnpm test-ui-concurrent
     ```
 * **View Test Report:** Opens the latest HTML report generated after test execution.
     ```bash
     pnpm test-report
     ```
+NOTE: When running locally, tests automatically run in headed mode. To run in headless mode, export the CI variable to true before each test.
+
+
+    echo 'Run all tests in headless mode'
+    CI=true pnpm test
+
 
 ### Other Commands
 
@@ -57,3 +69,20 @@ The project includes several pre-configured scripts to make test execution easy.
     ```bash
     pnpm typecheck
     ```
+
+## Test Scenarios
+
+### 1. UI Flow
+- Register a user on DemoQA (via API or UI).  
+- Log in with the new user and verify the profile page loads correctly.  
+
+### 2. Multi-user
+- Simulate **two users in parallel** using `browser.newContext()`.  
+- **User A** navigates to [Practice Form](https://demoqa.com/automation-practice-form) and fills it out.  
+- **User B** navigates to [Sortable Grid](https://demoqa.com/sortable) and reorders the items.  
+
+### 3. API Testing
+- Consume the [Books API](https://demoqa.com/swagger/) to retrieve all books.  
+- Creates an user and generates a token to authorize further API requests.  
+- Add a new book for the user via the API.  
+- Validate the **status codes** and **response structure** using TypeScript.  

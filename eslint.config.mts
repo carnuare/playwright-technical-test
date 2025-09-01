@@ -3,7 +3,7 @@ import playwright from "eslint-plugin-playwright";
 
 export default [
   {
-    ignores: ["node_modules"],
+    ignores: ["node_modules", "playwright-report*"],
   },
   ...tseslint.configs.recommended,
   playwright.configs["flat/recommended"],

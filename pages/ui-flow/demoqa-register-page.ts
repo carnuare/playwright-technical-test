@@ -59,15 +59,14 @@ export class RegistrationPage {
   }
 
   async submitMockRegistration() {
-    // Use page.evaluate to trigger the network request directly.
-    // This will in turn trigger the dialog event.
+
+    // This will trigger the mocked reposnse.
     await this.page.evaluate(async () => {
       const response = await fetch("/Account/v1/User", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
-      // Since the code in the browser looks for the '201' status,
-      // we can re-create the logic to trigger the alert.
+
       if (response.status === 201) {
         alert("User Register Successfully.");
       }
