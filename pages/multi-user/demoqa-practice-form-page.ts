@@ -77,7 +77,6 @@ export class PracticeFormPage {
     await expect(this.dateOfBirthInput).toHaveValue(dateOfBirth);
 
     // press escape to hide the date picker
-    await this.page.locator("body").click();
     await this.subjectsInput.press("Escape");
     await this.page.locator(".container > div > div:nth-child(3)").click();
     await this.page

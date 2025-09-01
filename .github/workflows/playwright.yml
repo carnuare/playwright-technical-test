@@ -28,8 +28,35 @@ jobs:
       - name: Run typecheck
         run: pnpm typecheck
 
+  setup-playwright:
+    name: Setup Playwright Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Upload Playwright Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-browsers
+          path: ~/.cache/ms-playwright
+
   playwright-tests:
     name: Run Playwright Tests (${{ matrix.mode }})
+    needs: setup-playwright
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -50,28 +77,11 @@ jobs:
         with:
           run_install: true
 
-      # - name: Export Playwright version
-      #   id: playwright-version
-      #   run: echo "PLAYWRIGHT_VERSION=$(pnpm list @playwright/test --json | jq -r '.[0].devDependencies[\"@playwright/test\"].version')" >> $GITHUB_ENV
-
-      # - name: Restore cache - playwright binaries
-      #   uses: actions/cache/restore@v4
-      #   id: playwright-cache
-      #   with:
-      #     path: ~/.cache/ms-playwright
-      #     key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-playwright-
-
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-
-      # - name: Save cache - playwright binaries
-      #   if: always() && steps.playwright-cache.outputs.cache-hit != 'true'
-      #   uses: actions/cache/save@v4
-      #   with:
-      #     path: ~/.cache/ms-playwright
-      #     key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+      - name: Download Playwright Binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-browsers
+          path: ~/.cache/ms-playwright
 
       - name: Run Playwright Tests API Mode
         if: matrix.mode == 'api'
@@ -82,32 +92,10 @@ jobs:
         if: matrix.mode == 'ui'
         run: |
           CI=true PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report-${{ matrix.mode }} pnpm test-${{ matrix.mode }}
-      
+
       - name: Upload Test Report (${{ matrix.mode }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: report-${{ matrix.mode }}
           path: playwright-report-${{ matrix.mode }}
-
-
-  # test:
-  #   timeout-minutes: 60
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - uses: actions/setup-node@v4
-  #     with:
-  #       node-version: lts/*
-  #   - name: Install dependencies
-  #     run: npm install -g pnpm && pnpm install
-  #   - name: Install Playwright Browsers
-  #     run: pnpm exec playwright install --with-deps
-  #   - name: Run Playwright tests
-  #     run: pnpm exec playwright test
-  #   - uses: actions/upload-artifact@v4
-  #     if: ${{ !cancelled() }}
-  #     with:
-  #       name: playwright-report
-  #       path: playwright-report/
-  #       retention-days: 30
