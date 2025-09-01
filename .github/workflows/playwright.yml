@@ -28,35 +28,8 @@ jobs:
       - name: Run typecheck
         run: pnpm typecheck
 
-  setup-playwright:
-    name: Setup Playwright Environment
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: true
-
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-
-      - name: Upload Playwright Binaries
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-browsers
-          path: ~/.cache/ms-playwright
-
   playwright-tests:
     name: Run Playwright Tests (${{ matrix.mode }})
-    needs: setup-playwright
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -77,13 +50,7 @@ jobs:
         with:
           run_install: true
 
-      - name: Download Playwright Binaries
-        uses: actions/download-artifact@v4
-        with:
-          name: playwright-browsers
-          path: ~/.cache/ms-playwright
-      
-      - name: Restore Playwright Binaries Permissions
+      - name: Install Playwright
         run: pnpm exec playwright install --with-deps
 
       - name: Run Playwright Tests API Mode
@@ -95,7 +62,7 @@ jobs:
         if: matrix.mode == 'ui'
         run: |
           CI=true PLAYWRIGHT_HTML_OUTPUT_DIR=playwright-report-${{ matrix.mode }} pnpm test-${{ matrix.mode }}
-
+      
       - name: Upload Test Report (${{ matrix.mode }})
         if: always()
         uses: actions/upload-artifact@v4
